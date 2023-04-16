@@ -26,7 +26,10 @@ export async function addShortcut(
   const data = {
     title,
     description,
-    keys: JSON.stringify({ mac: macKeys, windows: windowsKeys }),
+    keys: JSON.stringify({
+      mac: macKeys.filter((x) => x),
+      windows: windowsKeys.filter((x) => x),
+    }),
     upvotes: 0,
   };
 

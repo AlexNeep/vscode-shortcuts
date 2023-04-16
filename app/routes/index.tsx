@@ -26,39 +26,6 @@ import { addShortcut, getShortcuts } from "~/utils/db.server";
 
 export const config = { runtime: "edge" };
 
-// const dummyShortcuts: Shortcut[] = [
-//   {
-//     id: 123123,
-//     title: "Cut line",
-//     description: "Cut the current line when nothing is selected",
-//     upvotes: 10,
-//     keys: { mac: ["Cmd", "X"], windows: ["Ctrl", "X"] },
-//     category: "General",
-//   },
-//   {
-//     id: 1231233,
-//     title: "Copy line",
-//     description: "Copy the current line when nothing is selected",
-//     upvotes: 10,
-//     keys: {
-//       mac: ["Cmd", "C"],
-//       windows: ["Ctrl", "C"],
-//     },
-//     category: "General",
-//   },
-//   {
-//     id: 1231234,
-//     title: "Remove unused imports",
-//     description: "Remove unused imports",
-//     upvotes: 10,
-//     keys: {
-//       mac: ["Cmd", "Option", "O"],
-//       // windows: ["Ctrl", "Shift", "O"],
-//     },
-//     category: "Formatting",
-//   },
-// ];
-
 export type Shortcut = {
   id: number;
   title: string;
