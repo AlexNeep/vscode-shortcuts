@@ -66,7 +66,7 @@ export const action: ActionFunction = async ({ request }) => {
 type LoaderData = {
   shortcuts: Shortcut[];
 };
-
+``;
 type Vote = {
   id: number;
   upvote: boolean;
@@ -412,6 +412,7 @@ const AddNewShortcut = () => {
       setMacKeyCount(1);
       setWindowsKeyCount(1);
     }
+
     if (fetcher.data?.success) resetForm();
   }, [fetcher.data]);
 
