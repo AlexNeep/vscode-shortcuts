@@ -5,7 +5,7 @@ export async function getShortcuts(): Promise<Shortcut[]> {
   try {
     const res = await supabase
       .from("shortcuts")
-      .select("id,title,description,keys,upvotes");
+      .select("id,created_at,title,description,keys,upvotes");
 
     return res.data?.map((shortcut) => ({
       ...shortcut,

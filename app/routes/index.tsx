@@ -11,7 +11,7 @@ import {
   Sprout,
   Triangle,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AiFillApple, AiFillWindows } from "react-icons/ai";
 import { IoTriangleSharp } from "react-icons/io5";
 import Button, { ButtonPaddingOptions } from "~/components/core/Buttons";
@@ -27,6 +27,7 @@ import { addShortcut, getShortcuts } from "~/utils/db.server";
 export const config = { runtime: "edge" };
 
 export type Shortcut = {
+  created_at: Date;
   id: number;
   title: string;
   description: string;
@@ -37,24 +38,23 @@ export type Shortcut = {
 };
 
 type Device = "mac" | "windows";
-type Sort = "upvotes" | "newest" | "saved";
+type Sort = "upvotes" | "recent" | "saved";
 
 export const action: ActionFunction = async ({ request }) => {
   try {
     const formData = await request.formData();
     const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
+    const description = (formData.get("description") as string) ?? "";
     const macKeys = formData.getAll("mac_keys") as string[];
     const windowsKeys = formData.getAll("windows_keys") as string[];
 
     invariant(title, "Title is required");
-    invariant(description, "Description is required");
     if (!macKeys.length && !windowsKeys.length)
       invariant(false, "At least one key is required");
 
     await addShortcut(title, description, macKeys, windowsKeys);
 
-    return json({});
+    return json({ success: true });
   } catch (e: any) {
     console.log(e);
     if (e?.name) return json({ error: e.name });
@@ -78,11 +78,37 @@ export const loader: LoaderFunction = async () => {
   return json<LoaderData>({ shortcuts });
 };
 
+function getSortedShortcuts(
+  sort: Sort,
+  shortcuts: Shortcut[],
+  saved: number[]
+) {
+  switch (sort) {
+    case "upvotes":
+      return shortcuts.sort((a, b) => b.upvotes - a.upvotes);
+    case "saved":
+      const savedShortcuts = shortcuts.filter((s) => saved.includes(s.id));
+      const unsavedShortcuts = shortcuts.filter((s) => !saved.includes(s.id));
+      return [...savedShortcuts, ...unsavedShortcuts];
+
+    case "recent":
+      return shortcuts.sort((a, b) => {
+        const aDate = new Date(a.created_at);
+        const bDate = new Date(b.created_at);
+        return bDate.getTime() - aDate.getTime();
+      });
+    default:
+      return shortcuts;
+  }
+}
+
 const Index = () => {
   const { shortcuts } = useLoaderData<LoaderData>();
   const location = useLocation();
   const [device, setDevice] = useState<Device>(getDefaultDevice());
   const [sort, setSort] = useState<Sort>("upvotes");
+  const [saved, setSaved] = useState<number[]>([]);
+  const [votedIds, setVotedIds] = useState<Vote[]>([]);
 
   function getDefaultDevice() {
     const searchParams = new URLSearchParams(location.search);
@@ -92,17 +118,6 @@ const Index = () => {
 
     return "mac";
   }
-
-  useEffect(() => {
-    const saved = getSaved();
-    const votes = getVotes();
-
-    setSaved(saved);
-    setVotedIds(votes);
-  }, []);
-
-  const [saved, setSaved] = useState<number[]>([]);
-  const [votedIds, setVotedIds] = useState<Vote[]>([]);
 
   function getSaved(): number[] {
     if (saved.length > 0) return saved;
@@ -115,6 +130,16 @@ const Index = () => {
     const votesString = localStorage.getItem("votes");
     return votesString ? JSON.parse(votesString) : [];
   }
+
+  useEffect(() => {
+    const saved = getSaved();
+    const votes = getVotes();
+
+    setSaved(saved);
+    setVotedIds(votes);
+  }, []);
+
+  const sortedShortcuts = getSortedShortcuts(sort, shortcuts, saved);
 
   return (
     <div className="m-auto flex max-w-5xl flex-col gap-10 text-sky-50">
@@ -182,7 +207,7 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 items-center justify-start gap-4 md:grid-cols-2 lg:grid-cols-2">
-          {shortcuts.map((shortcut) => (
+          {sortedShortcuts.map((shortcut) => (
             <Shortcut
               key={shortcut.id}
               shortcut={shortcut}
@@ -379,6 +404,16 @@ const AddNewShortcut = () => {
   const [macKeyCount, setMacKeyCount] = useState(1);
   const [windowsKeyCount, setWindowsKeyCount] = useState(1);
   const fetcher = useFetcher();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    function resetForm() {
+      formRef.current?.reset();
+      setMacKeyCount(1);
+      setWindowsKeyCount(1);
+    }
+    if (fetcher.data?.success) resetForm();
+  }, [fetcher.data]);
 
   return (
     <section id="new-shortcut" className="mb-6 flex flex-col gap-8">
@@ -391,6 +426,7 @@ const AddNewShortcut = () => {
       </div>
 
       <fetcher.Form
+        ref={formRef}
         action="?index"
         method="post"
         className="flex flex-col gap-6 rounded bg-slate-700 p-4 shadow"
