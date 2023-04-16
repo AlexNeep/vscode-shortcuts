@@ -7,10 +7,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import { useEffect } from "react";
 
 import styles from "~/index.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
+import { setupGoogleAnalytics } from "./utils/GoogleAnalytics";
 
 export const meta: MetaFunction = () => {
   const title = "VSCode Shortcuts: The open source VSCode cheat sheet";
@@ -26,10 +28,10 @@ export const meta: MetaFunction = () => {
     "og:description": description,
     "og:type": "website",
     "og:url": "https://vscodeshortcuts.com",
-    "og:image": "/SocialCard.png",
+    "og:image": "/logo.png",
     "twitter:title": title,
     "twitter:description": description,
-    "twitter:image": "SocialCard.png",
+    "twitter:image": "/SocialCard.png",
     "twitter:card": "summary_large_image",
   };
 };
@@ -39,6 +41,10 @@ export function links() {
 }
 
 export default function App() {
+  useEffect(() => {
+    setupGoogleAnalytics();
+  }, []);
+
   return (
     <html lang="en">
       <head>
@@ -48,6 +54,11 @@ export default function App() {
           href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap"
           rel="stylesheet"
         />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-YTYZCJEYRB"
+        />
+
         <Meta />
         <Links />
       </head>
