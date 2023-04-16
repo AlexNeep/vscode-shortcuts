@@ -10,8 +10,15 @@ I want to learn new VSCode Shortcuts and so do many other developers with thousa
 
 I wanted to create a resource in line with other developer platforms such as Product Hunt, Reddit, HN etc where users can post new shortcuts and vote for the best ones. This will allow the cheat sheet to contain the BEST shortcuts possible (and this is the AI twist!) so that as developers, we can compete with the new AI overlords 🤖. 
 
-## Resources
+### next steps
 
+I have some loose ideas of what to do next if people find the website useful!
+* allow users to post custom shortcuts
+* apply to other verticals, photoshop etc
+* auth
+* embedded code editor so users can test them out in the browser
+
+## Resources
 
 ### ChatGPT
 Guidance around new topics such as the db function in supabase
@@ -23,7 +30,7 @@ I haven't sue supabase for anything in a few years so this was a good route back
 * db - I used the supabse db to store the shortcuts and allow additions from users
 * ~auth~ - I didn't implement auth due to the time constraints but will implement it using supabse auth soon (if people like the project)
   * I wanted to launch the MVP in one day and adding auth would have added just a slight bit of work more. Althought I am sure supabase make it easy
-### 
+
 
 ### Vercel (hosting)
 
