@@ -1,7 +1,9 @@
-import type { EntryContext } from "@remix-run/node";
+import type { EntryContext } from "@vercel/remix";
 import { RemixServer } from "@remix-run/react";
 import { renderToPipeableStream } from "react-dom/server";
 import { PassThrough } from "stream";
+
+// import { handleRequest } from '@vercel/remix';
 
 const ABORT_DELAY = 20000;
 
