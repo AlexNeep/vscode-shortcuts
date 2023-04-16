@@ -1,6 +1,7 @@
-import { useLocation } from "@remix-run/react";
+import { ActionFunction, json, LoaderFunction } from "@remix-run/node";
+import { useFetcher, useLocation } from "@remix-run/react";
+import invariant from "invariant";
 import {
-  Apple,
   Bookmark,
   BookmarkPlus,
   Command,
@@ -11,7 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { AiFillApple, AiFillWindows } from "react-icons/ai";
 import { IoTriangleSharp } from "react-icons/io5";
-import Button from "~/components/core/Buttons";
+import Button, { ButtonPaddingOptions } from "~/components/core/Buttons";
 import {
   Select,
   SelectContent,
@@ -19,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "~/components/radix/Select";
+import { addShortcut, getShortcuts } from "~/utils/db.server";
 
 function getSaved(): string[] {
   const savedString = localStorage.getItem("saved");
@@ -27,7 +29,7 @@ function getSaved(): string[] {
 
 const shortcuts: Shortcut[] = [
   {
-    id: "12312",
+    id: 123123,
     title: "Cut line",
     description: "Cut the current line when nothing is selected",
     upvotes: 10,
@@ -35,7 +37,7 @@ const shortcuts: Shortcut[] = [
     category: "General",
   },
   {
-    id: "2231123",
+    id: 1231233,
     title: "Copy line",
     description: "Copy the current line when nothing is selected",
     upvotes: 10,
@@ -46,7 +48,7 @@ const shortcuts: Shortcut[] = [
     category: "General",
   },
   {
-    id: "123123",
+    id: 1231234,
     title: "Remove unused imports",
     description: "Remove unused imports",
     upvotes: 10,
@@ -59,7 +61,7 @@ const shortcuts: Shortcut[] = [
 ];
 
 type Shortcut = {
-  id: string;
+  id: number;
   title: string;
   description: string;
   keys: {
@@ -71,6 +73,36 @@ type Shortcut = {
 
 type Device = "mac" | "windows";
 type Sort = "upvotes" | "newest" | "saved";
+
+export const action: ActionFunction = async ({ request }) => {
+  try {
+    console.log("here");
+
+    const formData = await request.formData();
+    const title = formData.get("title") as string;
+    const description = formData.get("description") as string;
+    const keys = formData.getAll("keys") as string[];
+    invariant(title, "Title is required");
+    invariant(description, "Description is required");
+    invariant(keys, "Keys are required");
+
+    console.log("here");
+    await addShortcut(title, description, keys);
+
+    return json({});
+  } catch (e: any) {
+    console.log(e);
+    if (e?.name) return json({ error: e.name });
+
+    return json({ error: e });
+  }
+};
+
+export const loader: LoaderFunction = async () => {
+  const shortcuts = await getShortcuts();
+  console.log(shortcuts);
+  return json({});
+};
 
 const Index = () => {
   const location = useLocation();
@@ -84,10 +116,6 @@ const Index = () => {
       return defaultDevice;
 
     return "mac";
-  }
-
-  function add() {
-    alert("add");
   }
 
   useEffect(() => {
@@ -174,22 +202,8 @@ const Index = () => {
           ))}
         </div>
       </section>
-      <section id="add" className="flex flex-col gap-4">
-        <h2 className="text-xl font-semibold">Submit a new VSCode Shortcut</h2>
-        <p>
-          Have a shortcut that you love that's not listed on our website? You
-          can submit it to our database and share it with the community.
-        </p>
 
-        <Button
-          className="flex items-center justify-center gap-2 rounded bg-sky-50 px-3 py-2 font-semibold text-sky-800 shadow"
-          onClick={add}
-        >
-          <>
-            Add Shortcut <PlusSquare />
-          </>
-        </Button>
-      </section>
+      <AddNewShortcut />
     </div>
   );
 };
@@ -251,7 +265,7 @@ const Shortcut = ({
 
         <h4 className="font-semibold">{shortcut.title}</h4>
         <div className="w-fit">
-          <Button onClick={onClick}>
+          <Button onClick={onClick} padding={ButtonPaddingOptions.SMALL}>
             <>
               {saved.includes(shortcut.id) ? "Saved" : "Save"}
               {saved.includes(shortcut.id) ? (
@@ -310,6 +324,63 @@ const Hero = () => {
         well as discover new shortcuts shared by the community, so you can
         become a vscode wizard 🪄.
       </p>
+    </section>
+  );
+};
+
+const AddNewShortcut = () => {
+  function add() {
+    alert("add");
+  }
+
+  const [keyCount, setKeyCount] = useState(1);
+  const fetcher = useFetcher();
+  console.log(fetcher.data?.error);
+
+  return (
+    <section id="new-shortcut" className="flex flex-col gap-4">
+      <h2 className="text-xl font-semibold">Submit a new VSCode Shortcut</h2>
+      <p>
+        Have a shortcut that you love that's not listed on our website? You can
+        submit it to our database and share it with the community.
+      </p>
+
+      <fetcher.Form
+        action="?index"
+        method="post"
+        className="flex flex-col gap-2 [&>input]:rounded [&>input]:px-2 [&>input]:py-1 [&>input]:text-sky-950 [&>input]:shadow"
+      >
+        <input type="text" name="title" placeholder="Title" />
+        <input type="text" name="description" placeholder="Description" />
+        <label>Key bindings</label>
+        {Array.from({ length: keyCount }, (_, i) => (
+          <input key={i} type="text" name="keys" placeholder={`Key ${i + 1}`} />
+        ))}
+
+        <button type="button" onClick={() => setKeyCount((count) => count + 1)}>
+          <PlusSquare />
+        </button>
+
+        <Button
+          type="submit"
+          className="flex items-center justify-center gap-2 rounded bg-sky-50 px-3 py-2 font-semibold text-sky-800 shadow"
+        >
+          <>
+            Add Shortcut <PlusSquare />
+          </>
+        </Button>
+      </fetcher.Form>
+
+      {fetcher.data?.success && (
+        <p className="rounded bg-green-400 px-2 py-1 font-semibold text-sky-950 shadow">
+          Shortcut added
+        </p>
+      )}
+      {fetcher?.data?.error && (
+        <p className="rounded bg-red-400 px-2 py-1 font-semibold text-sky-950 shadow">
+          {fetcher.data.error}
+        </p>
+      )}
     </section>
   );
 };

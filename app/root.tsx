@@ -51,7 +51,7 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-900 ">
+      <body className="scroll-smooth bg-slate-900">
         <div className="min-h-screen">
           <Header />
           <div className="px-2">

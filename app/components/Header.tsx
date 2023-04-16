@@ -20,13 +20,13 @@ const Header = () => {
   return (
     <div className="flex w-full items-center justify-between  border-b border-slate-300/10  p-4">
       <Home user={user} />
-      <div className="w-fit">
+      <Link to="#new-shortcut" className="w-fit">
         <Button>
           <>
             Add Shortcut <PlusSquare />
           </>
         </Button>
-      </div>
+      </Link>
     </div>
   );
 };
