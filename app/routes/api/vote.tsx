@@ -1,4 +1,5 @@
-import { ActionFunction, json } from "@remix-run/node";
+import { json } from "@vercel/remix";
+import type { ActionFunction } from "@remix-run/node";
 import { downvoteShortcut, upvoteShortcut } from "~/utils/db.server";
 
 export const action: ActionFunction = async ({ request }) => {
