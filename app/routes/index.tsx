@@ -1,4 +1,5 @@
-import { ActionFunction, json, LoaderFunction } from "@remix-run/node";
+import type { ActionFunction, LoaderFunction } from "@remix-run/node";
+import { json } from "@vercel/remix";
 import { useFetcher, useLoaderData, useLocation } from "@remix-run/react";
 import invariant from "invariant";
 import {
@@ -22,6 +23,8 @@ import {
   SelectValue,
 } from "~/components/radix/Select";
 import { addShortcut, getShortcuts } from "~/utils/db.server";
+
+export const config = { runtime: "edge" };
 
 // const dummyShortcuts: Shortcut[] = [
 //   {

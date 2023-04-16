@@ -22,6 +22,7 @@
     "@remix-run/vercel": "^1.11.1",
     "@stripe/stripe-js": "^1.46.0",
     "@supabase/supabase-js": "^2.20.0",
+    "@vercel/remix": "^1.15.0",
     "aws-sdk": "^2.1275.0",
     "cross-env": "^7.0.3",
     "firebase": "^9.15.0",
