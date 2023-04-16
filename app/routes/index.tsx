@@ -22,7 +22,7 @@ import {
 } from "~/components/radix/Select";
 import { addShortcut, getShortcuts } from "~/utils/db.server";
 
-function getSaved(): string[] {
+function getSaved(): number[] {
   const savedString = localStorage.getItem("saved");
   return savedString ? JSON.parse(savedString) : [];
 }
@@ -123,7 +123,7 @@ const Index = () => {
     setSaved(saved);
   }, []);
 
-  const [saved, setSaved] = useState<string[]>([]);
+  const [saved, setSaved] = useState<number[]>([]);
 
   return (
     <div className="m-auto flex max-w-5xl flex-col gap-10 text-sky-50">
@@ -216,8 +216,8 @@ const Shortcut = ({
 }: {
   shortcut: Shortcut;
   device: Device;
-  saved: string[];
-  setSaved: React.Dispatch<React.SetStateAction<string[]>>;
+  saved: number[];
+  setSaved: React.Dispatch<React.SetStateAction<number[]>>;
 }) => {
   const keys = shortcut.keys[device];
   if (!keys) return null;
