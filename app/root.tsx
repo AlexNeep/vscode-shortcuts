@@ -28,10 +28,10 @@ export const meta: MetaFunction = () => {
     "og:description": description,
     "og:type": "website",
     "og:url": "https://vscodeshortcuts.com",
-    "og:image": "/logo.png",
+    "og:image": "https://vscodeshortcuts.com/logo.png",
     "twitter:title": title,
     "twitter:description": description,
-    "twitter:image": "/SocialCard.png",
+    "twitter:image": "https://vscodeshortcuts.com/SocialCard.png",
     "twitter:card": "summary_large_image",
   };
 };
