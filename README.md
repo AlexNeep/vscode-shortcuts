@@ -14,6 +14,7 @@ I wanted to create a resource in line with other developer platforms such as Pro
 
 I have some loose ideas of what to do next if people find the website useful!
 * allow users to post custom shortcuts
+* potential issue regarding duplicates - I could check whether the shortcut commands match exactly. And then show a warnings. An extra step here would be to create an embedding of the description for the shortcut and if the description is too close to another, show a warning as well. This might prove difficult because shortcuts such as `Indent line` and `Outdent line` are very similar
 * apply to other verticals, photoshop etc
 * auth
 * embedded code editor so users can test them out in the browser
