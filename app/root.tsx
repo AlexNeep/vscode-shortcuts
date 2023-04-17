@@ -24,15 +24,17 @@ export const meta: MetaFunction = () => {
     title,
     description,
     viewport: "width=device-width,initial-scale=1",
+    "og:url": "https://vscodeshortcuts.com",
+    "og:type": "website",
     "og:title": title,
     "og:description": description,
-    "og:type": "website",
-    "og:url": "https://vscodeshortcuts.com",
-    "og:image": "https://vscodeshortcuts.com/logo.png",
+    "og:image": "https://vscodeshortcuts.com/SocialCard2.png",
+    "twitter:card": "summary_large_image",
+    "twitter:domain": "vscodeshortcuts.com",
+    "twitter:url": "https://vscodeshortcuts.com",
     "twitter:title": title,
     "twitter:description": description,
-    "twitter:image": "https://vscodeshortcuts.com/SocialCard.png",
-    "twitter:card": "summary_large_image",
+    "twitter:image": "https://vscodeshortcuts.com/SocialCard2.png",
   };
 };
 
