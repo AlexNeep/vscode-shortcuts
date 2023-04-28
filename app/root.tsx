@@ -1,4 +1,5 @@
 import type { MetaFunction } from "@remix-run/node";
+import Analytics from '@vercel/analytics'
 import {
   Links,
   LiveReload,
@@ -75,6 +76,7 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+ <Analytics />
       </body>
     </html>
   );
